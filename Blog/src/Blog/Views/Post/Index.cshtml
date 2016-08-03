@@ -1,0 +1,21 @@
+﻿@model List<Blog.Models.BlogPost>
+
+<h1>Posts</h1>
+
+@foreach (var item in Model)
+{
+    <div>
+        <hr>
+        <h3>@item.Title - @item.CreatedAt</h3>
+        <div>
+            <h3>
+                @item.Content
+            </h3>
+        </div>
+       
+        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+    </div>
+}
+<hr />
+<a asp-action="Create">Add new post</a>

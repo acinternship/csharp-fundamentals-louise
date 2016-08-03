@@ -1,0 +1,15 @@
+﻿@model Blog.Models.BlogPost
+
+<form method="post">
+    <div>
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+    </div>
+    <div>
+        <label asp-for="Content"></label>
+        <textarea cols="50" rows="5" asp-for="Content"></textarea>
+    </div>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+</form>
