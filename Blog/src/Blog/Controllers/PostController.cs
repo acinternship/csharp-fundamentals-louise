@@ -1,9 +1,12 @@
 ﻿using Blog.Entities;
 using Blog.Models;
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
@@ -11,6 +14,10 @@ namespace Blog.Controllers
     public class PostController : Controller
     {
         private BlogDbContext _dbContext;
+
+        private UserManager<User> _userManager;
+        private SignInManager<User> _signInManager;
+
         public PostController(BlogDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -22,7 +29,7 @@ namespace Blog.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet][Authorize]
         public ViewResult Create()
         {
             return View();
@@ -90,6 +97,48 @@ namespace Blog.Controllers
         }*/
 
 
+        //IDENTITY VIDEOS
+        public PostController(UserManager<User> userManager,
+            SignInManager<User> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
 
+
+        [HttpGet]
+        public ViewResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new User { UserName = model.Username };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                        return RedirectToAction("Index", "Home");
+
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+            return View();
+        }
+
+        private void SignInAsync(User user, bool v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
