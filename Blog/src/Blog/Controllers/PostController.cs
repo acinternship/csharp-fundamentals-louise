@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Blog.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class PostController : Controller
     {
         private BlogDbContext _dbContext;
