@@ -3,11 +3,13 @@
 <form method="post">
     <div>
         <label asp-for="Title"></label>
-        <input asp-for="Title"/>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
     </div>
     <div>
         <label asp-for="Content"></label>
         <textarea cols="50" rows="5" asp-for="Content"></textarea>
+        <span asp-validation-for="Content"></span>
     </div>
     <div>
         <input type="submit" value="Save" />

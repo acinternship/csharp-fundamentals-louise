@@ -1,25 +1,24 @@
-﻿using Blog.Models;
+﻿using Blog.Entities;
+using Blog.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
+    [Authorize]
     public class PostController : Controller
     {
-        private static List<BlogPost> _posts = new List<BlogPost>
+        private BlogDbContext _dbContext;
+        public PostController(BlogDbContext dbContext)
         {
-            new BlogPost {Id = 1, Title = "Post1", CreatedAt = DateTime.Now,
-                Content = "Teste"},
-            new BlogPost {Id = 2, Title = "Post2", CreatedAt = DateTime.Now,
-                Content = "Teste2"}
-        };
+            _dbContext = dbContext;
+        }
 
         public IActionResult Index()
         {
-            return View(_posts);
+            return View(_dbContext.Blog.ToList());
         }
 
 
@@ -32,12 +31,14 @@ namespace Blog.Controllers
         [HttpPost]
         public IActionResult Create(BlogPost post)
         {
-            /*if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-            }*/
+                return View(post);
+            }
 
             post.CreatedAt = DateTime.Now;
-            _posts.Add(post);
+            _dbContext.Blog.Add(post);
+            _dbContext.SaveChanges();
 
             return RedirectToAction("Index");
         }
@@ -45,16 +46,22 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var model =_posts.FirstOrDefault(p => p.Id == id);
+
+            var model = _dbContext.Blog.FirstOrDefault(item => item.Id == id);
             return View(model);
         }
 
         [HttpPost]
         public IActionResult Edit(BlogPost post)
         {
-            var model = _posts.FirstOrDefault(p => p.Id == post.Id);
+            if (!ModelState.IsValid)
+            {
+                return View(post);
+            }
+            var model = _dbContext.Blog.FirstOrDefault(p => p.Id == post.Id);
             model.Title = post.Title;
             model.Content = post.Content;
+            _dbContext.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -62,8 +69,13 @@ namespace Blog.Controllers
         {
             //var model = _posts.FirstOrDefault(p => p.Id == id); //verficar se model existe
             //_posts.Remove(model);
+            /*if ()
+            {
 
-            _posts.RemoveAll(p => p.Id == id);
+            }*/
+
+            var post = _dbContext.Blog.FirstOrDefault(P => P.Id == id);
+            _dbContext.Blog.Remove(post);
             return RedirectToAction("Index");
         }
 
